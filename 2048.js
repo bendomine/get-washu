@@ -156,21 +156,17 @@ if (touchscreen) document.getElementById("board").addEventListener("touchend", (
         if (deltaX > 0) {
             slideRight();
             setNewTile();
-            console.log("right");
         } else {
             slideLeft();
             setNewTile();
-            console.log("left");
         }
     } else {
         if (deltaY > 0) {
             slideDown();
             setNewTile();
-            console.log("down");
         } else {
             slideUp();
             setNewTile();
-            console.log("up");
         }
     }
     document.getElementById("score").innerText = score;
