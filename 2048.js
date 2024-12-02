@@ -4,6 +4,8 @@ var rows = 4;
 var columns = 4;
 let gameOver = false;
 
+let touchscreen = ('ontouchstart' in document.documentElement);
+
 let numToImage = {
     2: "slu.jpg",
     4: "mizzou.png",
@@ -27,6 +29,11 @@ window.addEventListener("keydown", function(e) {
         e.preventDefault();
     }
 }, false);
+
+// Prevent scrolling when swiping board on touchscreens
+document.getElementById("board").addEventListener("touchmove", function(e) {
+    e.preventDefault();
+}, {passive: false});
 
 function setGame() {
     // board = [
@@ -55,6 +62,9 @@ function setGame() {
     //create 2 to begin the game
     setTwo();
     setTwo();
+
+    // Provide instructions on mobile
+    if (touchscreen) document.getElementById('instructions').innerText = "\nSwipe to move tiles";
 
     //testing
     // set1024();
@@ -121,6 +131,47 @@ document.addEventListener('keyup', (e) => {
     else if (e.code === "ArrowDown" || e.code === "KeyS") {
         slideDown();
         setNewTile();
+    }
+    document.getElementById("score").innerText = score;
+});
+
+// Initial swipe positions
+let initX, initY;
+// Swipe event listeners for mobile
+if (touchscreen) document.getElementById("board").addEventListener("touchstart", (e) => {
+    initX = e.changedTouches[0].screenX;
+    initY = e.changedTouches[0].screenY;
+});
+
+if (touchscreen) document.getElementById("board").addEventListener("touchend", (e) => {
+    if (gameOver) return; // Do nothing if the game is over
+
+    let finalX = e.changedTouches[0].screenX;
+    let finalY = e.changedTouches[0].screenY;
+
+    let deltaX = finalX - initX;
+    let deltaY = finalY - initY;
+    if (Math.abs(deltaX) < 20 && Math.abs(deltaY) < 20) return; // Do nothing if the swipe is too small
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 0) {
+            slideRight();
+            setNewTile();
+            console.log("right");
+        } else {
+            slideLeft();
+            setNewTile();
+            console.log("left");
+        }
+    } else {
+        if (deltaY > 0) {
+            slideDown();
+            setNewTile();
+            console.log("down");
+        } else {
+            slideUp();
+            setNewTile();
+            console.log("up");
+        }
     }
     document.getElementById("score").innerText = score;
 });
